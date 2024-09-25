@@ -33,11 +33,13 @@ import com.example.todo_test.components.todo.TodoItemList
 import com.example.todo_test.ui.theme.Indigo300
 import com.example.todo_test.ui.theme.Indigo700
 import com.example.todo_test.ui.theme.Slate50
+import java.util.Date
 
 data class TodoItem(
     val id: Int,
     val text: String,
-    var isDone: Boolean = false
+    var isDone: Boolean = false,
+    val date: Date = Date()
 )
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
