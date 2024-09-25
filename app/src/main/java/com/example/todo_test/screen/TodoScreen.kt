@@ -62,7 +62,7 @@ fun TemporaryTodoScreen() {
         )
     }
 
-    var showPopover by remember { mutableStateOf(true) }
+    var showPopover by remember { mutableStateOf(false) }
 
     var currentId by remember { mutableIntStateOf(2) }
 
@@ -84,7 +84,7 @@ fun TemporaryTodoScreen() {
 
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showPopover = false }
+                onClick = { showPopover = true }
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Todo")
             }
