@@ -27,7 +27,6 @@ import com.example.todo_test.screen.TodoItem
 import com.example.todo_test.ui.theme.Blue400
 import com.example.todo_test.ui.theme.Gray800
 import com.example.todo_test.ui.theme.Indigo100
-import com.example.todo_test.ui.theme.Indigo400
 import com.example.todo_test.ui.theme.Indigo600
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
@@ -70,10 +69,6 @@ fun TodoContent(
 
                 Text(
                     dateFormat.format(item.date),
-                    modifier = Modifier
-                        .background(color = Indigo400, shape = RoundedCornerShape(5.dp))
-                        .padding(horizontal = 5.dp, vertical = 2.dp)
-                    ,
                     style = TextStyle(
                         fontSize = 10.sp,
                         color = Indigo600,
