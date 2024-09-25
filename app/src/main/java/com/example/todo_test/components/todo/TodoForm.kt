@@ -30,6 +30,8 @@ import com.example.todo_test.ui.theme.Indigo300
 import com.example.todo_test.ui.theme.Indigo700
 import com.example.todo_test.ui.theme.Slate100
 import com.example.todo_test.ui.theme.Slate50
+import com.example.todo_test.ui.theme.Slate700
+import com.example.todo_test.ui.theme.Slate800
 
 @Composable
 fun TodoForm(
@@ -59,6 +61,8 @@ fun TodoForm(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Slate50,
                 focusedContainerColor = Slate100,
+                focusedTextColor = Slate800,
+                unfocusedTextColor = Slate700
             ),
             placeholder = { Text("Enter the Text") },
             shape = RoundedCornerShape(12.dp),
