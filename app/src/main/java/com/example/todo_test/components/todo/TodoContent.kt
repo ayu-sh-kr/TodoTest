@@ -3,34 +3,36 @@ package com.example.todo_test.components.todo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_test.screen.TodoItem
+import com.example.todo_test.ui.theme.Blue400
 import com.example.todo_test.ui.theme.Gray800
 import com.example.todo_test.ui.theme.Indigo100
+import com.example.todo_test.ui.theme.Indigo400
 import com.example.todo_test.ui.theme.Indigo600
-import com.example.todo_test.ui.theme.Red400
-import com.example.todo_test.ui.theme.Red700
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun TodoContent(
@@ -39,19 +41,15 @@ fun TodoContent(
     onDeleteClick: () -> Unit
 ) {
 
-    val delete = SwipeAction(
-        icon = {
-            Icon(Icons.Filled.Delete, contentDescription = "Delete Action", tint = Red700)
-        },
-        background = Red400,
-        onSwipe = {onDeleteClick()}
-
+    val complete = SwipeAction(
+        icon = {},
+        background = Blue400,
+        onSwipe = {onCheckedChange(!item.isDone)}
     )
 
     SwipeableActionsBox(
-        endActions = listOf(delete),
+        startActions = listOf(complete),
         swipeThreshold = 100.dp,
-        backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(100.dp),
         modifier = Modifier
             .padding(5.dp)
     ) {
@@ -66,15 +64,24 @@ fun TodoContent(
                 .padding(horizontal = 16.dp, vertical = 5.dp)
         ) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
+            Column {
 
-                Checkbox(
-                    checked = item.isDone,
-                    onCheckedChange = onCheckedChange
+                val dateFormat = SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.getDefault())
+
+                Text(
+                    dateFormat.format(item.date),
+                    modifier = Modifier
+                        .background(color = Indigo400, shape = RoundedCornerShape(5.dp))
+                        .padding(horizontal = 5.dp, vertical = 2.dp)
+                    ,
+                    style = TextStyle(
+                        fontSize = 10.sp,
+                        color = Indigo600,
+                        fontWeight = FontWeight.Medium
+                    )
                 )
+
+                Spacer(modifier = Modifier.padding(vertical = 2.dp))
 
                 Text(
                     item.text,
@@ -84,7 +91,6 @@ fun TodoContent(
                         color = Gray800
                     )
                 )
-
             }
 
             IconButton(
