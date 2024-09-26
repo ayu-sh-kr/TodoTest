@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import com.example.todo_test.screen.TodoItem
+import com.example.todo_test.screen.todo.TodoItem
 
 @Composable
 fun TodoItemList(
