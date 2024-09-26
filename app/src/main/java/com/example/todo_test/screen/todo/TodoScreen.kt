@@ -14,8 +14,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,6 +36,8 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.example.todo_test.components.todo.TodoForm
 import com.example.todo_test.components.todo.TodoItemList
 import com.example.todo_test.ui.theme.Indigo300
@@ -60,20 +64,50 @@ interface TodoItemDao {
 
     @Query("SELECT * FROM TodoItem")
     fun getAllTodoItems(): Flow<List<TodoItem>>
+
+    @Query("UPDATE TodoItem SET isDone = :status WHERE id = :id")
+    fun updateItemStatus(id: Int, status: Boolean)
+
+    @Query("DELETE FROM TodoItem WHERE id = :id")
+    fun deleteItemById(id: Int)
 }
 
 @Database(entities = [TodoItem::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class TodoItemDatabase: RoomDatabase() {
     abstract fun todoItemDao(): TodoItemDao
+}
+
+class Converters {
+    @TypeConverter
+    fun fromTimestamp(value: Long?): Date? {
+        return value?.let { Date(it) }
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time
+    }
 }
 
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TemporaryTodoScreen(state: TodoItemState, insert: (TodoItem) -> Unit) {
+fun TemporaryTodoScreen(todoItemViewModel: TodoItemViewModel) {
 
-    var items = state.todoItems
+    val items = remember { mutableStateListOf<TodoItem>() }
+
+    LaunchedEffect(Unit) {
+        todoItemViewModel.getItems().collect { value ->
+            items.clear()
+            items.addAll(value)
+        }
+    }
+
+    val insert = todoItemViewModel::insert
+    val check = todoItemViewModel::check
+    val delete = todoItemViewModel::delete
 
     var showPopover by remember { mutableStateOf(false) }
 
@@ -115,15 +149,10 @@ fun TemporaryTodoScreen(state: TodoItemState, insert: (TodoItem) -> Unit) {
             TodoItemList(
                 items = items,
                 onTodoCheckedChange = {id, isChecked ->
-                    items = items.map {
-                        if(it.id == id) it.copy(id = it.id, text = it.text, isDone = isChecked) else it
-                    }
-                    println("Called onTodoCheckedChange")
+                    check(id, isChecked)
                 },
                 onTodoDelete = {id ->
-                    items = items.filter {
-                        it.id != id
-                    }
+                    delete(id)
                 }
             )
 
