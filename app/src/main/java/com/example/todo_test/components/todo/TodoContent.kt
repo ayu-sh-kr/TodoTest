@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.todo_test.screen.TodoItem
+import com.example.todo_test.screen.todo.TodoItem
 import com.example.todo_test.ui.theme.Blue400
 import com.example.todo_test.ui.theme.Gray800
 import com.example.todo_test.ui.theme.Indigo100
