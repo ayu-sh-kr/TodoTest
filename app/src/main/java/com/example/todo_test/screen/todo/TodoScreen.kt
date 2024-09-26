@@ -1,4 +1,4 @@
-package com.example.todo_test.screen
+package com.example.todo_test.screen.todo
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -23,44 +23,57 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.RoomDatabase
 import com.example.todo_test.components.todo.TodoForm
 import com.example.todo_test.components.todo.TodoItemList
 import com.example.todo_test.ui.theme.Indigo300
 import com.example.todo_test.ui.theme.Indigo700
 import com.example.todo_test.ui.theme.Slate50
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
+
+@Entity
 data class TodoItem(
-    val id: Int,
+
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val text: String,
     var isDone: Boolean = false,
     val date: Date = Date()
 )
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview
-@Composable
-fun TemporaryTodoScreen() {
+@Dao
+interface TodoItemDao {
+    @Insert
+    fun insert(todoItem: TodoItem)
 
-    var items by remember {
-        mutableStateOf(
-            listOf(
-                TodoItem(
-                    id = 1,
-                    text = "Get this shit done"
-                ),
-                TodoItem(
-                    id = 2,
-                    text = "Next Target Fasttrack"
-                )
-            )
-        )
-    }
+    @Query("SELECT * FROM TodoItem")
+    fun getAllTodoItems(): Flow<List<TodoItem>>
+}
+
+@Database(entities = [TodoItem::class], version = 1)
+abstract class TodoItemDatabase: RoomDatabase() {
+    abstract fun todoItemDao(): TodoItemDao
+}
+
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun TemporaryTodoScreen(state: TodoItemState, insert: (TodoItem) -> Unit) {
+
+    var items = state.todoItems
 
     var showPopover by remember { mutableStateOf(false) }
 
@@ -118,7 +131,7 @@ fun TemporaryTodoScreen() {
                 TodoFormPopover(
                     onDismiss = {showPopover = false},
                     onSubmit = {
-                        items = items + TodoItem(id = currentId + 1, text = it)
+                        insert(TodoItem(text = it))
                         currentId++
                         showPopover = false
                     }
