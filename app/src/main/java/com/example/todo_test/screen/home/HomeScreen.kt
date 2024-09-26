@@ -1,4 +1,4 @@
-package com.example.todo_test.screen
+package com.example.todo_test.screen.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
