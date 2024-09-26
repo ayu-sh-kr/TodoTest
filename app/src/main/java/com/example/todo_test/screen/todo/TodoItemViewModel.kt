@@ -2,6 +2,8 @@ package com.example.todo_test.screen.todo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -26,14 +28,30 @@ class TodoItemViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TodoItemState())
 
+    fun getItems(): Flow<List<TodoItem>> {
+        return _todoItems;
+    }
+
     fun insert(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             todoItemDao.insert(todoItem)
             _state.update {
                 it.copy(
                     text = ""
                 )
             }
+        }
+    }
+
+    fun check(id: Int, status: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoItemDao.updateItemStatus(id, status)
+        }
+    }
+
+    fun delete(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoItemDao.deleteItemById(id)
         }
     }
 
